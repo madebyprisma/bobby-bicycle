@@ -2,7 +2,7 @@
 	"name": "bobby-bicycle",
 	"type": "module",
 	"scripts": {
-		"start": "node ambient.js"
+		"start": "node src/server.js"
 	},
 	"dependencies": {
 		"body-parser": "^1.20.0",

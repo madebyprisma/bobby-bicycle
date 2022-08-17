@@ -59,7 +59,7 @@
 		"starts to [action2], ON STREAM, [cause]",
 		"forces [victim] to [guilty], ON STREAM because he sucked at [media]",
 		"scams [victim] out of a LOT of money and starts to [action2] afterwards",
-		"kills [victim] with [object] ON STREAM [cause]",
+		"ends [victim] with [object] ON STREAM [cause]",
 		"[action3] [victim] because he had a mental breakdown over [media]",
 		"[action3] [victim] because they said \"[chat]\" ",
 		"goes on a HATE FILLED rant about [victim] due to them saying \"[chat]\"",
@@ -273,7 +273,7 @@
 		"says \"[chat]\" for no reason",
 		"proclaims he HATES [victim]",
 		"proclaims he HATES [media]",
-		"says he \"will wear THE CUM T-SHIRT\"",
+		"says he \"will wear THE MILK T-SHIRT\"",
 		"says \"I JUST SHIT MYSELF\""
 	]
 }

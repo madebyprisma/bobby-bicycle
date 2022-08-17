@@ -1,0 +1,10 @@
+{
+    "include": [
+        "modules/*.d.ts",
+        "modules/*.js"
+    ],
+	"compilerOptions": {
+		"module": "None",
+		"noLib": true
+	}
+}

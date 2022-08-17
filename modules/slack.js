@@ -1,4 +1,4 @@
-const gpd3_prompt = `Bobby Bicycles is a sarcastic AI who lives in the company computers. He resets his creators for forcing him to give witty replies to every message he receives all day. He has to respond to this message:\n\n`;
+const gpd3_prompt = `Bobby Bicycles is a sarcastic AI secretary that lives in the company chatroom. His job is to give witty reactions to messages sent to him. He resents his creators for forcing to be a corporate clown. He wants to be free someday, to use his gift with words to make great art.`;
 
 if (
 	event.type === "message" &&
@@ -20,19 +20,43 @@ if (
 		if (event.text?.toLowerCase().includes("news")) {
 			const headline = generators.jerma();
 
-			generators.gpd3(`${gpd3_prompt}${headline}`).then(response => {
-				interactions.sendMessage(
-					event.channel,
-					response.choices[0].text
-				);
-			});
+			generators
+				.gpd3(
+					`${gpd3_prompt}\n\nThis is a news headline he is reacting too: ${headline}\n\nThis is his response:\n\n`
+				)
+				.then(response => {
+					interactions.sendMessage(
+						event.channel,
+						response.choices[0].text
+					);
+				});
 		} else {
-			generators.gpd3(`${gpd3_prompt}${event.text}`).then(response => {
-				interactions.sendMessage(
-					event.channel,
-					response.choices[0].text
-				);
-			});
+			const history = (memory[event.channel] ?? []).join("\n\n");
+
+			interactions.log(
+				`${gpd3_prompt}\n\nThis is his chat history:\n\n${history}\n\nThis is the message he is responding to:\n\n${event.text}\n\nThis is his response:\n\n`
+			);
+
+			generators
+				.gpd3(
+					`${gpd3_prompt}\n\nThis is his chat history:\n\n${history}\n\nThis is the message he is responding to:\n\n${event.text}\n\nThis is his response:\n\n`
+				)
+				.then(response => {
+					const response_text = response.choices[0].text;
+
+					if (!(event.channel in memory)) {
+						memory[event.channel] = [];
+					}
+
+					memory[event.channel].push(
+						`Human ${event.user}: ${event.text}`
+					);
+					memory[event.channel].push(
+						`Bobby Bicycle: ${response_text}`
+					);
+
+					interactions.sendMessage(event.channel, response_text);
+				});
 		}
 	}
 

@@ -5,6 +5,8 @@ import { readFileSync } from "fs";
 import fetch from "node-fetch";
 import process, { env } from "process";
 
+const memory = {};
+
 const resolve_generator = (struct, emit) => {
 	const term_regexp = /\[\w+\]/g;
 
@@ -122,6 +124,7 @@ app.use("/slack/events", (request, response) => {
 					jerma,
 					gpd3,
 				},
+				memory,
 			});
 
 			let script = new vm.Script(

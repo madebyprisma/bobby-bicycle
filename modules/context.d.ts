@@ -12,6 +12,7 @@ interface GPD3Response {
 }
 
 declare const event: MessageEvent;
+declare const memory: { [key: string]: any };
 
 declare namespace interactions {
 	export function log(message: string): void;

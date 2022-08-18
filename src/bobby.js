@@ -33,10 +33,7 @@ class Message {
 const sanitize_response = (memory, response_text) => {
 	let formatted_message = response_text
 		.trim()
-		.replace(
-			/^(Bobby:|Bobby Bicycle:|\[Bobby\]|\[Bobby Bicycle\]|\[\[Bobby Bicycle\]\])/,
-			""
-		);
+		.replace(/^(Bobby:|Bobby Bicycle:|\[Bobby\]|\[Bobby Bicycle\])/, "");
 	let repeat = memory.some(message => message.message === formatted_message);
 
 	if (repeat) {
@@ -78,7 +75,7 @@ export const bobby = event => {
 
 				let headline_message = new Message("[News Headline]", headline);
 				let human_message = new Message(
-					`[Human ${event.user}]`,
+					`Human ${event.user}`,
 					event.text
 				);
 
@@ -94,9 +91,14 @@ export const bobby = event => {
 						response.choices[0].text
 					);
 
-					memory[event.channel].push(
-						`[Bobby Bicycle] ${response_text}`
+					console.log("Responding with:", response_text);
+
+					let bobby_message = new Message(
+						"Bobby Bicycle",
+						response_text
 					);
+
+					memory[event.channel].push(bobby_message);
 
 					sendMessage(
 						event.channel,
@@ -116,8 +118,10 @@ export const bobby = event => {
 						response.choices[0].text
 					);
 
+					console.log("Responding with:", response_text);
+
 					let human_message = new Message(
-						`[Human ${event.user}]`,
+						`Human ${event.user}`,
 						event.text
 					);
 
@@ -131,7 +135,7 @@ export const bobby = event => {
 						);
 					} else {
 						let bobby_message = new Message(
-							"[Bobby Bicycle]",
+							"Bobby Bicycle",
 							response_text
 						);
 

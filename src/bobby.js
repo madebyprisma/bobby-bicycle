@@ -1,7 +1,47 @@
 import { addReaction, sendMessage } from "./slack.js";
 import { psychostreamer, gpd3 } from "./generators.js";
 
+const emojiset = [
+	":grimacing:",
+	":hugging_face:",
+	":laughing:",
+	":wink:",
+	":face_with_rolling_eyes:",
+	":thumbsup:",
+	":catjam:",
+	":joy:",
+	":no_milk:",
+	":cry:",
+	":sparkles:",
+	":heart:",
+	":robot_love:",
+];
+
 const memory = {};
+
+class Message {
+	toString() {
+		return `[${this.identity}] ${this.message}`;
+	}
+
+	constructor(identity, message) {
+		this.identity = identity;
+		this.message = message;
+	}
+}
+
+const sanitize_response = (memory, response_text) => {
+	let formatted_message = response_text
+		.trim()
+		.replace(/^(Bobby:|\[Bobby\]|\[Bobby Bicycle\])/, "");
+	let repeat = memory.some(message => message.message === formatted_message);
+
+	if (repeat) {
+		return emojiset[Math.round(Math.random() * (1 - emojiset.length))];
+	} else {
+		return formatted_message;
+	}
+};
 
 export const bobby = event => {
 	if (
@@ -33,15 +73,23 @@ export const bobby = event => {
 			if (event.text?.toLowerCase().includes("news")) {
 				const headline = psychostreamer();
 
-				memory[event.channel].push(
-					`[Human ${event.user}] ${event.text}`
+				let headline_message = new Message("[News Headline]", headline);
+				let human_message = new Message(
+					`[Human ${event.user}]`,
+					event.text
 				);
-				memory[event.channel].push(`[News Headline] ${headline}`);
 
-				const history = memory[event.channel].join("\n\n");
+				memory[event.channel].push(human_message, headline_message);
+
+				const history = memory[event.channel]
+					.map(message => message.toString())
+					.join("\n\n");
 
 				gpd3(history, headline).then(response => {
-					const response_text = response.choices[0].text;
+					const response_text = sanitize_response(
+						memory[event.channel],
+						response.choices[0].text
+					);
 
 					memory[event.channel].push(
 						`[Bobby Bicycle] ${response_text}`
@@ -53,16 +101,24 @@ export const bobby = event => {
 					);
 				});
 			} else {
-				const history = memory[event.channel].join("\n\n");
+				const history = memory[event.channel]
+					.map(memory => memory.toString())
+					.join("\n\n");
 
 				gpd3(history, event.text).then(response => {
 					console.log(response);
 
-					const response_text = response.choices[0].text.trim();
-
-					memory[event.channel].push(
-						`[Human ${event.user}] ${event.text}`
+					const response_text = sanitize_response(
+						memory[event.channel],
+						response.choices[0].text
 					);
+
+					let human_message = new Message(
+						`Human ${event.user}`,
+						event.text
+					);
+
+					memory[event.channel].push(human_message);
 
 					if (/^:\w+:$/.test(response_text)) {
 						addReaction(
@@ -71,9 +127,12 @@ export const bobby = event => {
 							event.event_ts
 						);
 					} else {
-						memory[event.channel].push(
-							`[Bobby Bicycle] ${response_text}`
+						let bobby_message = new Message(
+							"[Bobby Bicycle]",
+							response_text
 						);
+
+						memory[event.channel].push(bobby_message);
 
 						sendMessage(event.channel, response_text);
 					}

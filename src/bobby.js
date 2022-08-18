@@ -33,7 +33,10 @@ class Message {
 const sanitize_response = (memory, response_text) => {
 	let formatted_message = response_text
 		.trim()
-		.replace(/^(Bobby:|\[Bobby\]|\[Bobby Bicycle\])/, "");
+		.replace(
+			/^(Bobby:|Bobby Bicycle:|\[Bobby\]|\[Bobby Bicycle\]|\[\[Bobby Bicycle\]\])/,
+			""
+		);
 	let repeat = memory.some(message => message.message === formatted_message);
 
 	if (repeat) {
@@ -114,7 +117,7 @@ export const bobby = event => {
 					);
 
 					let human_message = new Message(
-						`Human ${event.user}`,
+						`[Human ${event.user}]`,
 						event.text
 					);
 

@@ -64,11 +64,12 @@ export const bobby = event => {
 						`[Human ${event.user}] ${event.text}`
 					);
 
-					if (
-						response_text.startsWith(":") &&
-						response_text.endsWith(":")
-					) {
-                        addReaction(event.channel, response_text.slice(1, -1), event.event_ts);
+					if (/^:\w+:$/.test(response_text)) {
+						addReaction(
+							event.channel,
+							response_text.slice(1, -1),
+							event.event_ts
+						);
 					} else {
 						memory[event.channel].push(
 							`[Bobby Bicycle] ${response_text}`
